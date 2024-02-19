@@ -26,7 +26,31 @@ export interface Env {
 }
 
 export default {
+	authorizedHosts: ["workers-playground-empty-pine-6d03.mclaysen.workers.dev"],
+
 	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
-		return new Response('Hello World!');
-	},
-};
+		let origin = request.headers.get("origin");
+		const { method, url } = request;
+		const { host, pathname } = new URL(url);
+		if(request?.cf===undefined){
+			return new Response("Unknown location");
+		}
+		const locationInfo = {
+		  country: request.cf.country,
+		  city: request.cf.city,
+		  state: request.cf.region,
+		  zip: request.cf.postalCode,
+		  latitude: request.cf.latitude,
+		  longitude: request.cf.longitude
+		};
+		console.log(this.authorizedHosts);
+		if (!this.authorizedHosts.includes(host)) {
+		  return new Response("Unauthorized for " + host, {
+			status: 403
+		  });
+		}
+		return new Response(JSON.stringify(locationInfo), {
+		  status: 200
+		});
+	  }
+	};
