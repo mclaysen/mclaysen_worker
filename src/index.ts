@@ -44,7 +44,7 @@ export default {
 		  longitude: request.cf.longitude
 		};
 		console.log(this.authorizedHosts);
-		if (!this.authorizedHosts.includes(host) || false) {
+		if (false) {
 		  return new Response("Unauthorized for " + host, {
 			status: 403
 		  });
